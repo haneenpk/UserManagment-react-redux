@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { loginUser } from '../../../services/api';
 
 function Copyright(props) {
     return (
@@ -22,7 +23,7 @@ function Copyright(props) {
             {'.'}
         </Typography>
     );
-}
+};
 
 const defaultTheme = createTheme();
 
@@ -59,7 +60,7 @@ export default function Login() {
         setPasswordError(false);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         clearErrors();
 
@@ -70,7 +71,17 @@ export default function Login() {
         isUsernameValid && setUsernameError(isUsernameValid);
         isPasswordValid && setPasswordError(isPasswordValid);
 
-        console.log(username, password);
+        if (!isUsernameValid && !isPasswordValid) {
+            try {
+                const response = await loginUser({ username, password });
+
+                // Handle the successful signin response
+                console.log('Signin successful:', response.data);
+            } catch (error) {
+                // Handle errors from the signin request
+                console.error('Signin failed:', error);
+            }
+        }
     };
 
     return (
@@ -85,7 +96,7 @@ export default function Login() {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <Avatar sx={{ m: 1, bgcolor: '#1e1e2f' }}>
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
@@ -101,7 +112,7 @@ export default function Login() {
                             name="username"
                             autoComplete="username"
                             autoFocus
-                            error={usernameError}
+                            error={Boolean(usernameError)}
                             helperText={usernameError && usernameError}
                             onChange={(e) => setUsername(e.target.value)}
                         />
@@ -114,7 +125,7 @@ export default function Login() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            error={passwordError}
+                            error={Boolean(passwordError)}
                             helperText={passwordError && passwordError}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -139,4 +150,4 @@ export default function Login() {
             </Container>
         </ThemeProvider>
     );
-}
+};

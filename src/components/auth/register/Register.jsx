@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { registerUser } from '../../../services/api';
 
 function Copyright(props) {
   return (
@@ -22,7 +23,7 @@ function Copyright(props) {
       {'.'}
     </Typography>
   );
-}
+};
 
 const defaultTheme = createTheme();
 
@@ -62,7 +63,7 @@ export default function Register() {
 
   function validatePhone(phone) {
     if (phone) {
-      if (!(/^\d{10}$/.test(phone))) {
+      if (!/^\d{10}$/.test(phone)) {
         return "Enter a valid phone number";
       }
     } else {
@@ -88,7 +89,7 @@ export default function Register() {
     setConfPasswordError(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     clearErrors();
 
@@ -105,9 +106,22 @@ export default function Register() {
     isPasswordValid && setPasswordError(isPasswordValid);
     !isConfPasswordValid && setConfPasswordError(true);
 
-    console.log({
-      username, email, phone, password, confPassword
-    });
+    if (!isUsernameValid && !isEmailValid && !isPhoneValid && !isPasswordValid && isConfPasswordValid) {
+      try {
+        const response = await registerUser({
+          username,
+          email,
+          phone,
+          password,
+        });
+
+        // Handle the successful signup response
+        console.log('Signup successful:', response.data);
+      } catch (error) {
+        // Handle errors from the signup request
+        console.error('Signup failed:', error.response.data);
+      }
+    }
   };
 
   return (
@@ -122,7 +136,7 @@ export default function Register() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: '#1e1e2f' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -138,7 +152,7 @@ export default function Register() {
               name="username"
               autoComplete="username"
               autoFocus
-              error={usernameError}
+              error={Boolean(usernameError)}
               helperText={usernameError && usernameError}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -150,7 +164,7 @@ export default function Register() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              error={emailError}
+              error={Boolean(emailError)}
               helperText={emailError && emailError}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -161,7 +175,7 @@ export default function Register() {
               id="outlined-number"
               label="Phone"
               type="number"
-              error={phoneError}
+              error={Boolean(phoneError)}
               helperText={phoneError && phoneError}
               onChange={(e) => setPhone(e.target.value)}
             />
@@ -174,7 +188,7 @@ export default function Register() {
               type="password"
               id="password"
               autoComplete="password"
-              error={passwordError}
+              error={Boolean(passwordError)}
               helperText={passwordError && passwordError}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -187,7 +201,7 @@ export default function Register() {
               type="password"
               id="confirm_password"
               autoComplete="confirm-password"
-              error={confPasswordError}
+              error={Boolean(confPasswordError)}
               helperText={confPasswordError && 'Confirm Password is required'}
               onChange={(e) => setConfPassword(e.target.value)}
             />
@@ -212,4 +226,4 @@ export default function Register() {
       </Container>
     </ThemeProvider>
   );
-}
+};

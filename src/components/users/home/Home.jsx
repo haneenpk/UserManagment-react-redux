@@ -1,5 +1,9 @@
+import Header from '../../partials/header/Header';
+
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <Header user={'Username'} />
+  );
 };
 
 export default Home;

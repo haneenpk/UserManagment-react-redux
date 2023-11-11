@@ -1,5 +1,9 @@
+import Header from '../../partials/header/Header';
+
 const Profile = () => {
-  return <div>Profile</div>;
+  return (
+    <Header user={'Username'} />
+  );
 };
 
 export default Profile;
