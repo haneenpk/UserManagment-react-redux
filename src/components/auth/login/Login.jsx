@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLoggedIn } from '../../../redux/slices/userSlice';
+import { setUsername as setUserDisplayName } from '../../../redux/slices/userSlice';
+import { setLoggedIn as setAdminLoggedIn } from '../../../redux/slices/adminSlice';
+import { setUsername as setAdmiDisplayName } from '../../../redux/slices/adminSlice';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -27,7 +33,11 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function Login({ role }) {
+    const dispatch = useDispatch();
+
+    const navigate = useNavigate(); 
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -73,10 +83,18 @@ export default function Login() {
 
         if (!isUsernameValid && !isPasswordValid) {
             try {
-                const response = await loginUser({ username, password });
-
+                const response = await loginUser({ username, password, role });
+                
                 // Handle the successful signin response
-                console.log('Signin successful:', response.data);
+                if (role === 'user') {
+                    dispatch(setLoggedIn(true));
+                    dispatch(setUserDisplayName(username));
+                    navigate('/');
+                } else {
+                    dispatch(setAdminLoggedIn(true));
+                    dispatch(setAdmiDisplayName(username));
+                    navigate('/admin');
+                }
             } catch (error) {
                 // Handle errors from the signin request
                 console.error('Signin failed:', error);
@@ -137,13 +155,15 @@ export default function Login() {
                         >
                             Sign In
                         </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Link href="/sign-up" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
+                        {role === 'user' &&
+                            <Grid container>
+                                <Grid item>
+                                    <Link href="/sign-up" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        }
                     </Box>
                 </Box>
                 <Copyright sx={{ mt: 8, mb: 4 }} />

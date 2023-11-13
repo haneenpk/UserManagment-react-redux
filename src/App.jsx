@@ -1,5 +1,9 @@
-import { Fragment } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Fragment, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { initializeUser } from './redux/slices/userSlice';
+import { initializeAdmin } from './redux/slices/adminSlice';
 import Home from './components/users/home/Home';
 import Profile from './components/users/Profile/Profile';
 import Dashboard from './components/admin/Dashboard/Dashboard';
@@ -8,15 +12,30 @@ import Register from './components/auth/register/Register';
 import "./App.css";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Dispatch the asynchronous initialization functions on component mount
+    dispatch(initializeUser());
+    dispatch(initializeAdmin());
+  }, [dispatch]);
+
+  // Use selectors to get the logged-in status of admin and user
+  const isAdminLoggedIn = useSelector(state => state.admin.isLoggedIn);
+  const isUserLoggedIn = useSelector(state => state.user.isLoggedIn);
+
   return (
     <Fragment>
+      {isAdminLoggedIn && console.log("admin logged in")}
+      {isUserLoggedIn && console.log("user logged in")}
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/sign-up" element={<Register />} />
+          <Route path="/" element={isUserLoggedIn ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={isUserLoggedIn ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/admin" element={isAdminLoggedIn ? <Dashboard /> : <Navigate to="/admin/login" />} />
+          <Route path="/admin/login" element={!isAdminLoggedIn ? <Login role={'admin'} /> : <Navigate to="/admin" />} />
+          <Route path="/login" element={!isUserLoggedIn ? <Login role={'user'} /> : <Navigate to="/" />} />
+          <Route path="/sign-up" element={!isUserLoggedIn ? <Register /> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </Fragment>

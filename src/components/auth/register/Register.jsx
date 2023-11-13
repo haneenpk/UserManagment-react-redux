@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -28,6 +29,8 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -113,10 +116,13 @@ export default function Register() {
           email,
           phone,
           password,
+          confPassword
         });
 
         // Handle the successful signup response
-        console.log('Signup successful:', response.data);
+        if (response && response.data.status === "success") {
+          navigate("/login");
+        }
       } catch (error) {
         // Handle errors from the signup request
         console.error('Signup failed:', error.response.data);
