@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoggedIn } from '../../../redux/slices/userSlice';
 import { setUsername as setUserDisplayName } from '../../../redux/slices/userSlice';
@@ -36,7 +37,7 @@ const defaultTheme = createTheme();
 export default function Login({ role }) {
     const dispatch = useDispatch();
 
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -84,20 +85,28 @@ export default function Login({ role }) {
         if (!isUsernameValid && !isPasswordValid) {
             try {
                 const response = await loginUser({ username, password, role });
-                
-                // Handle the successful signin response
-                if (role === 'user') {
-                    dispatch(setLoggedIn(true));
-                    dispatch(setUserDisplayName(username));
-                    navigate('/');
-                } else {
-                    dispatch(setAdminLoggedIn(true));
-                    dispatch(setAdmiDisplayName(username));
-                    navigate('/admin');
+
+                if (response) {
+                    if (response.data.status === "success") {
+                        // Handle the successful signin response
+                        if (role === 'user') {
+                            dispatch(setLoggedIn(true));
+                            dispatch(setUserDisplayName(username));
+                            navigate('/');
+                        } else {
+                            dispatch(setAdminLoggedIn(true));
+                            dispatch(setAdmiDisplayName(username));
+                            navigate('/admin');
+                        }
+                    } else {
+                        alert(response.data.message);
+                        console.log(response);
+                    }
                 }
             } catch (error) {
                 // Handle errors from the signin request
-                console.error('Signin failed:', error);
+                alert('Signin failed');
+                console.error(error);
             }
         }
     };
@@ -158,9 +167,9 @@ export default function Login({ role }) {
                         {role === 'user' &&
                             <Grid container>
                                 <Grid item>
-                                    <Link href="/sign-up" variant="body2">
+                                    <RouterLink to="/sign-up" variant="body2">
                                         {"Don't have an account? Sign Up"}
-                                    </Link>
+                                    </RouterLink>
                                 </Grid>
                             </Grid>
                         }

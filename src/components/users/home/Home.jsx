@@ -5,7 +5,7 @@ const Home = () => {
   const username = useSelector(state => state.user.username);
 
   return (
-    <Header user={username} />
+    <Header user={username} role={'user'} />
   );
 };
 

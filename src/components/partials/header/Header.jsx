@@ -1,21 +1,25 @@
 import { useDispatch } from 'react-redux';
+import Button from '@mui/material/Button';
 import { setLoggedIn } from '../../../redux/slices/userSlice';
 import { setLoggedIn as setAdminLoggedIn } from '../../../redux/slices/adminSlice';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from "../../../services/api";
 import "./Header.css";
 
-const Header = ({ user }) => {
+const Header = ({ user, role }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const logout = async () => {
-    let response = await logoutUser();
+    const response = await logoutUser();
     if (response && response.data.status === "success") {
-      // Dispatch setLoggedIn action with false to update the state
-      dispatch(setLoggedIn(false));
-      // Navigate to the home page or any other desired location
-      navigate("/");
+      if (role === "user") {
+        dispatch(setLoggedIn(false));
+        navigate("/");
+      } else {
+        dispatch(setAdminLoggedIn(false));
+        navigate("/admin/login");
+      }
     }
   };
 
@@ -24,12 +28,16 @@ const Header = ({ user }) => {
       <div className="container">
         <h1>StylesCraze</h1>
         <div className="header-right">
-          <h3>{user}</h3>
-          <button
+          <h3 className='display-name'>{user}</h3>
+          <Button
             className="logout-btn"
-            onClick={() =>
-              logout()
-            }>Logout</button>
+            variant="contained"
+            size="small"
+            style={{ backgroundColor: '#821e15', color: 'white' }}
+            onClick={() => logout()}
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </header>

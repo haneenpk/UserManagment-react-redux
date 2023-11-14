@@ -1,3 +1,8 @@
+import { Link as RouterLink } from 'react-router-dom';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsFiltered, setFilteredUsers } from '../../../redux/slices/adminSlice';
+
 import { styled } from '@mui/material/styles';
 import { alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -42,7 +47,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: 'inherit',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
         width: '100%',
@@ -56,6 +60,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchComponent() {
+    const dispatch = useDispatch();
+    const users = useSelector(state => state.admin.users);
+
+    const handleSearchChange = (event) => {
+        const searchQuery = event.target.value.toLowerCase();
+        if (searchQuery.length) {
+            dispatch(setIsFiltered(true));
+        } else {
+            dispatch(setIsFiltered(false));
+        }
+        const filteredUsers = users.filter(user => {
+            return user.username && user.username.toLowerCase().includes(searchQuery);
+        });
+        dispatch(setFilteredUsers(filteredUsers));
+    };
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -85,9 +105,16 @@ export default function SearchComponent() {
                     <StyledInputBase
                         placeholder="Search…"
                         inputProps={{ 'aria-label': 'search' }}
+                        onChange={handleSearchChange}
                     />
                     <Button variant="contained" endIcon={<PersonAddAltIcon />}>
-                        Add User
+                        <RouterLink
+                            to="/admin/add-user"
+                            variant="body2"
+                            style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
+                        >
+                            {"Add User"}
+                        </RouterLink>
                     </Button>
                 </Toolbar>
             </AppBar>

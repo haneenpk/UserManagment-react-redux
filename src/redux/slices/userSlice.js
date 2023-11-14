@@ -27,10 +27,10 @@ export default userSlice.reducer;
 // Asynchronous initialization function
 export const initializeUser = () => async (dispatch) => {
     try {
-        const response = await checkAuth();
-        console.log("u", response);
+        const response = await checkAuth({ role: 'user' });
         if (response && response.data.status === 'success' && response.data.role === 'user') {
             dispatch(setLoggedIn(true));
+            dispatch(setUsername(response.data.currentUser.username));
         } else {
             dispatch(setLoggedIn(false));
         }

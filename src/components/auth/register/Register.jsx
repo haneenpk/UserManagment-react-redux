@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -120,8 +120,12 @@ export default function Register() {
         });
 
         // Handle the successful signup response
-        if (response && response.data.status === "success") {
-          navigate("/login");
+        if (response) {
+          if (response.data.status === "success") {
+            navigate("/login");
+          } else {
+            alert(response.data.message);
+          }
         }
       } catch (error) {
         // Handle errors from the signup request
@@ -221,9 +225,9 @@ export default function Register() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/login" variant="body2">
+                <RouterLink to="/login" variant="body2">
                   {"Already have an account? Sign In"}
-                </Link>
+                </RouterLink>
               </Grid>
             </Grid>
           </Box>

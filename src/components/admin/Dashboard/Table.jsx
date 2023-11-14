@@ -1,3 +1,9 @@
+import { Link as RouterLink } from 'react-router-dom';
+
+import { deleteUser } from '../../../services/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { initializeAdmin } from '../../../redux/slices/adminSlice';
+
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -34,19 +40,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function createData(username, email, phone) {
-    return { username, email, phone };
-}
+export default function TableComponent({ data }) {
+    const loading = useSelector(state => state.admin.loading);
+    const dispatch = useDispatch();
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0),
-    createData('Ice cream sandwich', 237, 9.0),
-    createData('Eclair', 262, 16.0),
-    createData('Cupcake', 305, 3.7),
-    createData('Gingerbread', 356, 16.0),
-];
+    const deleteThisUser = async (id) => {
+        let response = await deleteUser({ id: id });
+        if (response && response.data.status === "success") {
+            dispatch(initializeAdmin());
+        }
+    };
 
-export default function TableComponent() {
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -59,8 +63,18 @@ export default function TableComponent() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <StyledTableRow key={row.username}>
+                    {loading &&
+                        <TableRow>
+                            <TableCell>Loading...</TableCell>
+                        </TableRow>
+                    }
+                    {data.length === 0 &&
+                        <TableRow>
+                            <TableCell>No data found</TableCell>
+                        </TableRow>
+                    }
+                    {data.map((row) => (
+                        <StyledTableRow key={row._id}>
                             <StyledTableCell component="th" scope="row">
                                 {row.username}
                             </StyledTableCell>
@@ -69,9 +83,17 @@ export default function TableComponent() {
                             <StyledTableCell align="right">
                                 <Button variant="outlined" startIcon={<PenIcon />}
                                     style={{ marginRight: '10px' }}>
-                                    Edit
+                                    <RouterLink
+                                        to={`/admin/edit-user/${row._id}`}
+                                        variant="body2"
+                                        style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
+                                    >
+                                        {"Edit"}
+                                    </RouterLink>
                                 </Button>
-                                <Button variant="outlined" color="error" startIcon={<DeleteIcon />}>
+                                <Button variant="outlined" color="error"
+                                    startIcon={<DeleteIcon />} onClick={() => deleteThisUser(row._id)}
+                                >
                                     Delete
                                 </Button>
                             </StyledTableCell>

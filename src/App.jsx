@@ -7,6 +7,8 @@ import { initializeAdmin } from './redux/slices/adminSlice';
 import Home from './components/users/home/Home';
 import Profile from './components/users/Profile/Profile';
 import Dashboard from './components/admin/Dashboard/Dashboard';
+import AddUserForm from "./components/admin/Dashboard/addUserForm/AddUserForm";
+import EditUserForm from "./components/admin/Dashboard/editUserForm/EditUserForm";
 import Login from './components/auth/login/Login';
 import Register from './components/auth/register/Register';
 import "./App.css";
@@ -26,13 +28,13 @@ function App() {
 
   return (
     <Fragment>
-      {isAdminLoggedIn && console.log("admin logged in")}
-      {isUserLoggedIn && console.log("user logged in")}
       <Router>
         <Routes>
           <Route path="/" element={isUserLoggedIn ? <Home /> : <Navigate to="/login" />} />
           <Route path="/profile" element={isUserLoggedIn ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/admin" element={isAdminLoggedIn ? <Dashboard /> : <Navigate to="/admin/login" />} />
+          <Route path="/admin/add-user" element={isAdminLoggedIn ? <AddUserForm /> : <Navigate to="/admin/login" />} />
+          <Route path="/admin/edit-user/:userId" element={isAdminLoggedIn ? <EditUserForm /> : <Navigate to="/admin/login" />} />
           <Route path="/admin/login" element={!isAdminLoggedIn ? <Login role={'admin'} /> : <Navigate to="/admin" />} />
           <Route path="/login" element={!isUserLoggedIn ? <Login role={'user'} /> : <Navigate to="/" />} />
           <Route path="/sign-up" element={!isUserLoggedIn ? <Register /> : <Navigate to="/" />} />
