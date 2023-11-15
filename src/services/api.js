@@ -53,9 +53,40 @@ export const fetchUsers = async () => {
     }
 };
 
+export const addUser = async (data) => {
+    try {
+        return await axios.post(`${URL}/admin/add-user`, data);
+    } catch (error) {
+        alert(error.response.data.message);
+        console.log(error);
+    }
+};
+
+export const editUser = async (data) => {
+    try {
+        return await axios.post(`${URL}/admin/edit-user`, data);
+    } catch (error) {
+        alert(error.response.data.message);
+        console.log(error);
+    }
+};
+
 export const deleteUser = async (id) => {
     try {
         return await axios.post(`${URL}/admin/delete-user`, id);
+    } catch (error) {
+        alert(error.response.data.message);
+        console.log(error);
+    }
+};
+
+export const editProfile = async (data, size) => {
+    try {
+        if (size) {
+            return await axios.post(`${URL}/edit-full-profile`, data);
+        } else {
+            return await axios.post(`${URL}/edit-profile`, data);
+        }
     } catch (error) {
         alert(error.response.data.message);
         console.log(error);

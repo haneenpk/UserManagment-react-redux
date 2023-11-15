@@ -7,6 +7,7 @@ const userSlice = createSlice({
         // user-related state
         isLoggedIn: false,
         username: null,
+        currentUser: null,
     },
     reducers: {
         // user-related reducers (e.g., setUser, editProfile, addProfilePic)
@@ -18,10 +19,13 @@ const userSlice = createSlice({
         setUsername: (state, action) => {
             state.username = action.payload;
         },
+        setCurrentUser: (state, action) => {
+            state.currentUser = action.payload;
+        },
     },
 });
 
-export const { setLoggedIn, setUsername } = userSlice.actions;
+export const { setLoggedIn, setUsername, setCurrentUser } = userSlice.actions;
 export default userSlice.reducer;
 
 // Asynchronous initialization function
@@ -31,6 +35,7 @@ export const initializeUser = () => async (dispatch) => {
         if (response && response.data.status === 'success' && response.data.role === 'user') {
             dispatch(setLoggedIn(true));
             dispatch(setUsername(response.data.currentUser.username));
+            dispatch(setCurrentUser(response.data.currentUser));
         } else {
             dispatch(setLoggedIn(false));
         }

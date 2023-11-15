@@ -107,15 +107,15 @@ export default function SearchComponent() {
                         inputProps={{ 'aria-label': 'search' }}
                         onChange={handleSearchChange}
                     />
-                    <Button variant="contained" endIcon={<PersonAddAltIcon />}>
-                        <RouterLink
-                            to="/admin/add-user"
-                            variant="body2"
-                            style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
-                        >
-                            {"Add User"}
-                        </RouterLink>
-                    </Button>
+                    <RouterLink
+                        to="/admin/add-user"
+                        variant="body2"
+                        style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
+                    >
+                        <Button variant="contained" endIcon={<PersonAddAltIcon />}>
+                            Add User
+                        </Button>
+                    </RouterLink>
                 </Toolbar>
             </AppBar>
         </Box>

@@ -81,16 +81,14 @@ export default function TableComponent({ data }) {
                             <StyledTableCell align="right">{row.email}</StyledTableCell>
                             <StyledTableCell align="right">{row.phone}</StyledTableCell>
                             <StyledTableCell align="right">
-                                <Button variant="outlined" startIcon={<PenIcon />}
-                                    style={{ marginRight: '10px' }}>
-                                    <RouterLink
-                                        to={`/admin/edit-user/${row._id}`}
-                                        variant="body2"
-                                        style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
-                                    >
-                                        {"Edit"}
-                                    </RouterLink>
-                                </Button>
+                                <RouterLink
+                                    to={`/admin/edit-user/${row._id}`}
+                                    variant="body2"
+                                    style={{ marginRight: '10px', textDecoration: 'none', color: 'inherit' }}
+                                >
+                                    <Button variant="outlined" startIcon={<PenIcon />}
+                                        style={{ marginRight: '10px' }}>Edit</Button>
+                                </RouterLink>
                                 <Button variant="outlined" color="error"
                                     startIcon={<DeleteIcon />} onClick={() => deleteThisUser(row._id)}
                                 >
@@ -103,4 +101,4 @@ export default function TableComponent({ data }) {
             </Table>
         </TableContainer>
     );
-}
+};
