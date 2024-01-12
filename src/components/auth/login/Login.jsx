@@ -24,7 +24,7 @@ function Copyright(props) {
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
             <Link color="inherit" href="">
-                StylesCraze
+                CozaStore
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -45,11 +45,12 @@ export default function Login({ role }) {
     // errors
     const [usernameError, setUsernameError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
+    const [backendError, setBackendError] = useState("");
 
     function validateUsername(username) {
         if (username) {
             if (username.length < 4) {
-                return "Username must be atleast 4 characters long";
+                return "Username must be at least 4 characters long";
             }
         } else {
             return "Username is required";
@@ -59,7 +60,7 @@ export default function Login({ role }) {
     function validatePassword(password) {
         if (password) {
             if (password.length < 8) {
-                return "Password must be atleast 8 characters long";
+                return "Password must be at least 8 characters long";
             }
         } else {
             return "Password is required";
@@ -69,6 +70,7 @@ export default function Login({ role }) {
     function clearErrors() {
         setUsernameError(false);
         setPasswordError(false);
+        setBackendError("");
     };
 
     const handleSubmit = async (event) => {
@@ -99,13 +101,12 @@ export default function Login({ role }) {
                             navigate('/admin');
                         }
                     } else {
-                        alert(response.data.message);
-                        console.log(response);
+                        setBackendError(response.data.message);
                     }
                 }
             } catch (error) {
                 // Handle errors from the signin request
-                alert('Signin failed');
+                setBackendError("Signin failed");
                 console.error(error);
             }
         }
@@ -164,6 +165,11 @@ export default function Login({ role }) {
                         >
                             Sign In
                         </Button>
+                        {backendError && (
+                            <Typography variant="body2" color="error" align="center" sx={{ mb: 1 }}>
+                                {backendError}
+                            </Typography>
+                        )}
                         {role === 'user' &&
                             <Grid container>
                                 <Grid item>

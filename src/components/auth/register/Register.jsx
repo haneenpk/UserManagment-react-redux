@@ -24,7 +24,7 @@ function Copyright(props) {
       {'.'}
     </Typography>
   );
-};
+}
 
 const defaultTheme = createTheme();
 
@@ -44,15 +44,18 @@ export default function Register() {
   const [passwordError, setPasswordError] = useState(false);
   const [confPasswordError, setConfPasswordError] = useState(false);
 
+  // Additional state for backend errors
+  const [backendError, setBackendError] = useState("");
+
   function validateUsername(username) {
     if (username) {
       if (username.length < 4) {
-        return "Username must be atleast 4 characters long";
+        return "Username must be at least 4 characters long";
       }
     } else {
       return "Username is required";
     }
-  };
+  }
 
   function validateEmail(email) {
     if (email) {
@@ -62,27 +65,27 @@ export default function Register() {
     } else {
       return "Email is required";
     }
-  };
+  }
 
   function validatePhone(phone) {
     if (phone) {
-      if (!/^\d{10}$/.test(phone)) {
+      if (phone.length !== 10) {
         return "Enter a valid phone number";
       }
     } else {
       return "Phone number is required";
     }
-  };
+  }
 
   function validatePassword(password) {
     if (password) {
       if (password.length < 8) {
-        return "Password must be atleast 8 characters long";
+        return "Password must be at least 8 characters long";
       }
     } else {
       return "Password is required";
     }
-  };
+  }
 
   function clearErrors() {
     setUsernameError(false);
@@ -90,7 +93,8 @@ export default function Register() {
     setPhoneError(false);
     setPasswordError(false);
     setConfPasswordError(false);
-  };
+    setBackendError("");
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -102,6 +106,7 @@ export default function Register() {
     const isPhoneValid = validatePhone(phone);
     const isPasswordValid = validatePassword(password);
     const isConfPasswordValid = password === confPassword;
+
     // Update error states
     isUsernameValid && setUsernameError(isUsernameValid);
     isEmailValid && setEmailError(isEmailValid);
@@ -124,12 +129,23 @@ export default function Register() {
           if (response.data.status === "success") {
             navigate("/login");
           } else {
-            alert(response.data.message);
+            // Set backend error to be displayed in the UI
+            setBackendError(response.data.message);
           }
         }
       } catch (error) {
         // Handle errors from the signup request
-        console.error('Signup failed:', error.response.data);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // Set backend error to be displayed in the UI
+          setBackendError(error.response.data.message);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error setting up the request:', error.message);
+        }
       }
     }
   };
@@ -215,6 +231,11 @@ export default function Register() {
               helperText={confPasswordError && 'Confirm Password is required'}
               onChange={(e) => setConfPassword(e.target.value)}
             />
+            {backendError && (
+              <Typography color="error" align="center" gutterBottom>
+                {backendError}
+              </Typography>
+            )}
             <Button
               type="submit"
               fullWidth
@@ -236,4 +257,4 @@ export default function Register() {
       </Container>
     </ThemeProvider>
   );
-};
+}

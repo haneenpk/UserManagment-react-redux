@@ -10,7 +10,6 @@ const userSlice = createSlice({
         currentUser: null,
     },
     reducers: {
-        // user-related reducers (e.g., setUser, editProfile, addProfilePic)
 
         // reducer to change the value of isLoggedIn
         setLoggedIn: (state, action) => {

@@ -10,13 +10,14 @@ export const checkAuth = async (data) => {
     } catch (error) {
         alert(error.response.data.message);
         console.log(error);
-    }
+    }    
 };
 
 export const registerUser = async (data) => {
     try {
         return await axios.post(`${URL}/register`, data);
     } catch (error) {
+        console.log(error);
         alert(error.response.data.message);
         console.log(error);
     }

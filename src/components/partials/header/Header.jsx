@@ -26,7 +26,7 @@ const Header = ({ user, role }) => {
   return (
     <header>
       <div className="container">
-        <h1>StylesCraze</h1>
+        <h1>CozaStore</h1>
         <div className="header-right">
           <h3 className='display-name'>{user}</h3>
           <Button
